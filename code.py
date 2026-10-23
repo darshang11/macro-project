@@ -78,22 +78,22 @@ def main():
       if blocked:
         stop()
         lastSeen = time.time() # waiting doesn't count as being lost
-      else:
-        left, middle, right = readLineFinders()
-        printLineFinders(left, middle, right)
-        speeds = decideDrive(left, middle, right)
-        if speeds is None:
+    else:
+      left, middle, right = readLineFinders()
+      printLineFinders(left, middle, right)
+      speeds = decideDrive(left, middle, right)
+      if speeds is None:
+        interval = time.time() - lastSeen
+        while(interval < LOST_TIME_LIMIT):
+          drive(lastLeft, lastRight)
           interval = time.time() - lastSeen
-          while(interval < LOST_TIME_LIMIT):
-            drive(lastLeft, lastRight)
-            interval = time.time() - lastSeen
           stop()
-        else:
-          leftSpeed, rightSpeed = speeds
-          lastSeen = time.time()
-          lastRight = rightSpeed
-          lastLeft = leftSpeed
-          drive(leftSpeed, rightSpeed)
+      else:
+        leftSpeed, rightSpeed = speeds
+        lastSeen = time.time()
+        lastRight = rightSpeed
+        lastLeft = leftSpeed
+        drive(leftSpeed, rightSpeed)
       
 try: main()
 except KeyboardInterrupt:
