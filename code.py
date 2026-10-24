@@ -33,9 +33,9 @@ def detectObject(stopDistance):
   return False
 
 def readLineFinders():
-  leftSees = leftLineSensor.line_detected
-  middleSees = middleLineSensor.line_detected
-  rightSees = rightLineSensor.line_detected
+  leftSees = not leftLineSensor.line_detected
+  middleSees = not middleLineSensor.line_detected
+  rightSees = not rightLineSensor.line_detected
   return leftSees, middleSees, rightSees
 
 def printLineFinders(leftSees, middleSees, rightSees):
