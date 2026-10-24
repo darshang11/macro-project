@@ -12,6 +12,8 @@ LOST_TIME_LIMIT = 1
 
 leftMotor = Motor('A')
 rightMotor = Motor('B')
+leftMotor.plimit(0.9)
+rightMotor.plimit(0.9)
 leftLineSensor = LineFinder(5)
 middleLineSensor = LineFinder(16)
 rightLineSensor = LineFinder(18)
@@ -32,6 +34,7 @@ def detectObject(stopDistance):
     return True
   return False
 
+# our line finders read opposite of the library docs, so flip them
 def readLineFinders():
   leftSees = not leftLineSensor.line_detected
   middleSees = not middleLineSensor.line_detected
@@ -63,7 +66,7 @@ def decideDrive(left, middle, right):
     return SPEED, SHARP * SPEED          # sharp right
   else:
     return None                          # lost
-    
+
 
 def main():
   counter = 0
@@ -75,18 +78,18 @@ def main():
     time.sleep(0.02)
     if(counter % 5 == 0):
       blocked = detectObject(STOP_DISTANCE)
-      if blocked:
-        stop()
-        lastSeen = time.time() # waiting doesn't count as being lost
+    if blocked:
+      stop()
+      lastSeen = time.time() # waiting doesn't count as being lost
     else:
       left, middle, right = readLineFinders()
       printLineFinders(left, middle, right)
       speeds = decideDrive(left, middle, right)
       if speeds is None:
         interval = time.time() - lastSeen
-        while(interval < LOST_TIME_LIMIT):
+        if interval < LOST_TIME_LIMIT:
           drive(lastLeft, lastRight)
-          interval = time.time() - lastSeen
+        else:
           stop()
       else:
         leftSpeed, rightSpeed = speeds
@@ -94,11 +97,11 @@ def main():
         lastRight = rightSpeed
         lastLeft = leftSpeed
         drive(leftSpeed, rightSpeed)
-      
-try: main()
+    counter += 1
+
+try:
+  main()
 except KeyboardInterrupt:
   print("Keyboard Interrupt")
+finally:
   stop()
-finally: 
-  stop()
-    
